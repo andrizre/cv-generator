@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Generator | Buat CV Profesional Gratis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+            .cv-container {
+                padding: 0;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-blue-600 text-white py-6 shadow-md">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold text-center">CV Generator</h1>
+            <p class="text-center mt-2">Buat CV Profesional dengan Mudah dan Gratis</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 mt-8">
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Formulir Input Data -->
+            <div class="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-md no-print">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Masukkan Data Diri</h2>
+                
+                <form id="cvForm" class="space-y-6">
+                    <!-- Data Diri -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-medium text-blue-600">Informasi Pribadi</h3>
+                        
+                        <div>
+                            <label for="foto" class="block text-gray-700 mb-1">Foto Profil</label>
+                            <input type="file" id="foto" class="w-full p-2 border rounded" accept="image/*">
+                            <div id="previewFoto" class="mt-2 w-32 h-32 border rounded flex items-center justify-center bg-gray-100">
+                                <span class="text-gray-400 text-sm">Preview Foto</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nama" class="block text-gray-700 mb-1">Nama Lengkap*</label>
+                                <input type="text" id="nama" class="w-full p-2 border rounded" required>
+                            </div>
+                            
+                            <div>
+                                <label for="posisi" class="block text-gray-700 mb-1">Posisi/Jabatan*</label>
+                                <input type="text" id="posisi" class="w-full p-2 border rounded" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="email" class="block text-gray-700 mb-1">Email*</label>
+                                <input type="email" id="email" class="w-full p-2 border rounded" required>
+                            </div>
+                            
+                            <div>
+                                <label for="telepon" class="block text-gray-700 mb-1">Telepon*</label>
+                                <input type="tel" id="telepon" class="w-full p-2 border rounded" required>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="alamat" class="block text-gray-700 mb-1">Alamat</label>
+                            <textarea id="alamat" class="w-full p-2 border rounded" rows="2"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="ringkasan" class="block text-gray-700 mb-1">Ringkasan Profil</label>
+                            <textarea id="ringkasan" class="w-full p-2 border rounded" rows="3" placeholder="Deskripsikan diri Anda secara singkat..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Pendidikan -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-medium text-blue-600">Pendidikan</h3>
+                        
+                        <div id="pendidikan-container">
+                            <div class="pendidikan-item p-3 border rounded mb-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Gelar/Jurusan*</label>
+                                        <input type="text" class="gelar w-full p-2 border rounded" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Institusi*</label>
+                                        <input type="text" class="institusi w-full p-2 border rounded" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Tahun Mulai*</label>
+                                        <input type="number" class="tahun-mulai w-full p-2 border rounded" min="1950" max="2030" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Tahun Selesai*</label>
+                                        <input type="number" class="tahun-selesai w-full p-2 border rounded" min="1950" max="2030" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="tambah-pendidikan" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+                            + Tambah Pendidikan
+                        </button>
+                    </div>
+                    
+                    <!-- Pengalaman Kerja -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-medium text-blue-600">Pengalaman Kerja</h3>
+                        
+                        <div id="pengalaman-container">
+                            <div class="pengalaman-item p-3 border rounded mb-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Posisi*</label>
+                                        <input type="text" class="posisi-kerja w-full p-2 border rounded" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Perusahaan*</label>
+                                        <input type="text" class="perusahaan w-full p-2 border rounded" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Tahun Mulai*</label>
+                                        <input type="number" class="tahun-mulai-kerja w-full p-2 border rounded" min="1950" max="2030" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-gray-700 mb-1">Tahun Selesai*</label>
+                                        <input type="number" class="tahun-selesai-kerja w-full p-2 border rounded" min="1950" max="2030" placeholder="Hingga sekarang = kosongkan">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Deskripsi Pekerjaan</label>
+                                    <textarea class="deskripsi-kerja w-full p-2 border rounded" rows="3" placeholder="Jelaskan tanggung jawab dan pencapaian Anda..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="tambah-pengalaman" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+                            + Tambah Pengalaman
+                        </button>
+                    </div>
+                    
+                    <!-- Keahlian -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-medium text-blue-600">Keahlian</h3>
+                        
+                        <div id="keahlian-container">
+                            <div class="keahlian-item grid grid-cols-3 gap-4 mb-3">
+                                <div class="col-span-2">
+                                    <label class="block text-gray-700 mb-1">Keahlian*</label>
+                                    <input type="text" class="nama-keahlian w-full p-2 border rounded" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Level (1-5)*</label>
+                                    <input type="number" class="level-keahlian w-full p-2 border rounded" min="1" max="5" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="tambah-keahlian" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+                            + Tambah Keahlian
+                        </button>
+                    </div>
+                    
+                    <!-- Bahasa -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-medium text-blue-600">Bahasa</h3>
+                        
+                        <div id="bahasa-container">
+                            <div class="bahasa-item grid grid-cols-3 gap-4 mb-3">
+                                <div class="col-span-2">
+                                    <label class="block text-gray-700 mb-1">Bahasa*</label>
+                                    <input type="text" class="nama-bahasa w-full p-2 border rounded" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Level (1-5)*</label>
+                                    <input type="number" class="level-bahasa w-full p-2 border rounded" min="1" max="5" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="tambah-bahasa" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+                            + Tambah Bahasa
+                        </button>
+                    </div>
+                    
+                    <div class="pt-4 border-t flex justify-between">
+                        <button type="button" id="previewBtn" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                            Preview CV
+                        </button>
+                        <button type="button" id="resetBtn" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">
+                            Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Preview CV -->
+            <div class="w-full md:w-1/2">
+                <div class="flex justify-between items-center mb-4 no-print">
+                    <h2 class="text-2xl font-semibold text-gray-800">Preview CV</h2>
+                    <div>
+                        <button id="printBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mr-2">
+                            <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                            </svg>
+                            Print
+                        </button>
+                        <button id="downloadBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="cv-preview" class="bg-white shadow-md rounded-lg p-8 cv-container">
+                    <div class="cv-placeholder text-center text-gray-400 py-32">
+                        <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="mt-2 text-lg">Isi formulir untuk melihat preview CV</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12 no-print">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 CV Generator. Dibuat dengan ❤️ untuk membantu Anda mendapatkan pekerjaan impian.</p>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            // Preview foto profil
+            $('#foto').change(function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#previewFoto').html(`<img src="${e.target.result}" class="w-32 h-32 object-cover rounded">`);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Tambah pendidikan
+            $('#tambah-pendidikan').click(function() {
+                const newItem = `
+                    <div class="pendidikan-item p-3 border rounded mb-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                            <div>
+                                <label class="block text-gray-700 mb-1">Gelar/Jurusan*</label>
+                                <input type="text" class="gelar w-full p-2 border rounded" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-1">Institusi*</label>
+                                <input type="text" class="institusi w-full p-2 border rounded" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 mb-1">Tahun Mulai*</label>
+                                <input type="number" class="tahun-mulai w-full p-2 border rounded" min="1950" max="2030" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-1">Tahun Selesai*</label>
+                                <input type="number" class="tahun-selesai w-full p-2 border rounded" min="1950" max="2030" required>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="hapus-pendidikan text-red-600 mt-2 hover:text-red-800">
+                            Hapus
+                        </button>
+                    </div>
+                `;
+                
+                $('#pendidikan-container').append(newItem);
+            });
+            
+            // Hapus pendidikan
+            $(document).on('click', '.hapus-pendidikan', function() {
+                $(this).closest('.pendidikan-item').remove();
+            });
+            
+            // Tambah pengalaman
+            $('#tambah-pengalaman').click(function() {
+                const newItem = `
+                    <div class="pengalaman-item p-3 border rounded mb-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                            <div>
+                                <label class="block text-gray-700 mb-1">Posisi*</label>
+                                <input type="text" class="posisi-kerja w-full p-2 border rounded" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-1">Perusahaan*</label>
+                                <input type="text" class="perusahaan w-full p-2 border rounded" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                            <div>
+                                <label class="block text-gray-700 mb-1">Tahun Mulai*</label>
+                                <input type="number" class="tahun-mulai-kerja w-full p-2 border rounded" min="1950" max="2030" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-1">Tahun Selesai*</label>
+                                <input type="number" class="tahun-selesai-kerja w-full p-2 border rounded" min="1950" max="2030" placeholder="Hingga sekarang = kosongkan">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-1">Deskripsi Pekerjaan</label>
+                            <textarea class="deskripsi-kerja w-full p-2 border rounded" rows="3" placeholder="Jelaskan tanggung jawab dan pencapaian Anda..."></textarea>
+                        </div>
+                        
+                        <button type="button" class="hapus-pengalaman text-red-600 mt-2 hover:text-red-800">
+                            Hapus
+                        </button>
+                    </div>
+                `;
+                
+                $('#pengalaman-container').append(newItem);
+            });
+            
+            // Hapus pengalaman
+            $(document).on('click', '.hapus-pengalaman', function() {
+                $(this).closest('.pengalaman-item').remove();
+            });
+            
+            // Tambah keahlian
+            $('#tambah-keahlian').click(function() {
+                const newItem = `
+                    <div class="keahlian-item grid grid-cols-3 gap-4 mb-3">
+                        <div class="col-span-2">
+                            <label class="block text-gray-700 mb-1">Keahlian*</label>
+                            <input type="text" class="nama-keahlian w-full p-2 border rounded" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-1">Level (1-5)*</label>
+                            <input type="number" class="level-keahlian w-full p-2 border rounded" min="1" max="5" required>
+                        </div>
+                        
+                        <div>
+                            <button type="button" class="hapus-keahlian text-red-600 hover:text-red-800">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                $('#keahlian-container').append(newItem);
+            });
+            
+            // Hapus keahlian
+            $(document).on('click', '.hapus-keahlian', function() {
+                $(this).closest('.keahlian-item').remove();
+            });
+            
+            // Tambah bahasa
+            $('#tambah-bahasa').click(function() {
+                const newItem = `
+                    <div class="bahasa-item grid grid-cols-3 gap-4 mb-3">
+                        <div class="col-span-2">
+                            <label class="block text-gray-700 mb-1">Bahasa*</label>
+                            <input type="text" class="nama-bahasa w-full p-2 border rounded" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-1">Level (1-5)*</label>
+                            <input type="number" class="level-bahasa w-full p-2 border rounded" min="1" max="5" required>
+                        </div>
+                        
+                        <div>
+                            <button type="button" class="hapus-bahasa text-red-600 hover:text-red-800">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                $('#bahasa-container').append(newItem);
+            });
+            
+            // Hapus bahasa
+            $(document).on('click', '.hapus-bahasa', function() {
+                $(this).closest('.bahasa-item').remove();
+            });
+            
+            // Preview CV
+            $('#previewBtn').click(function() {
+                generateCV();
+            });
+            
+            // Print CV
+            $('#printBtn').click(function() {
+                if ($('#cv-preview .cv-placeholder').length > 0) {
+                    alert('Silakan isi formulir dan preview CV terlebih dahulu');
+                    return;
+                }
+                window.print();
+            });
+            
+            // Download PDF
+            $('#downloadBtn').click(function() {
+                if ($('#cv-preview .cv-placeholder').length > 0) {
+                    alert('Silakan isi formulir dan preview CV terlebih dahulu');
+                    return;
+                }
+                
+                const element = document.getElementById('cv-preview');
+                const options = {
+                    margin: 10,
+                    filename: 'CV_' + $('#nama').val().replace(/\s+/g, '_') + '.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                
+                html2pdf().set(options).from(element).save();
+            });
+            
+            // Reset form
+            $('#resetBtn').click(function() {
+                if (confirm('Apakah Anda yakin ingin mengosongkan semua form?')) {
+                    $('#cvForm')[0].reset();
+                    $('#previewFoto').html('<span class="text-gray-400 text-sm">Preview Foto</span>');
+                    $('#cv-preview').html(`
+                        <div class="cv-placeholder text-center text-gray-400 py-32">
+                            <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="mt-2 text-lg">Isi formulir untuk melihat preview CV</p>
+                        </div>
+                    `);
+                    
+                    // Reset multi forms
+                    $('.pendidikan-item:not(:first)').remove();
+                    $('.pengalaman-item:not(:first)').remove();
+                    $('.keahlian-item:not(:first)').remove();
+                    $('.bahasa-item:not(:first)').remove();
+                    
+                    // Clear all inputs
+                    $('.pendidikan-item:first input').val('');
+                    $('.pengalaman-item:first input, .pengalaman-item:first textarea').val('');
+                    $('.keahlian-item:first input').val('');
+                    $('.bahasa-item:first input').val('');
+                }
+            });
+            
+            // Fungsi untuk menghasilkan CV
+            function generateCV() {
+                // Validasi form
+                let isValid = true;
+                $('input[required]').each(function() {
+                    if ($(this).val() === '') {
+                        isValid = false;
+                        $(this).addClass('border-red-500');
+                    } else {
+                        $(this).removeClass('border-red-500');
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('Mohon isi semua bidang yang wajib diisi (bertanda *)');
+                    return;
+                }
+                
+                // Dapatkan foto profil
+                let fotoUrl = '';
+                if ($('#previewFoto img').length > 0) {
+                    fotoUrl = $('#previewFoto img').attr('src');
+                }
+                
+                // Dapatkan data pribadi
+                const nama = $('#nama').val();
+                const posisi = $('#posisi').val();
+                const email = $('#email').val();
+                const telepon = $('#telepon').val();
+                const alamat = $('#alamat').val();
+                const ringkasan = $('#ringkasan').val();
+                
+                // Dapatkan pendidikan
+                const pendidikan = [];
+                $('.pendidikan-item').each(function() {
+                    const gelar = $(this).find('.gelar').val();
+                    const institusi = $(this).find('.institusi').val();
+                    const tahunMulai = $(this).find('.tahun-mulai').val();
+                    const tahunSelesai = $(this).find('.tahun-selesai').val();
+                    
+                    if (gelar && institusi && tahunMulai && tahunSelesai) {
+                        pendidikan.push({
+                            gelar: gelar,
+                            institusi: institusi,
+                            tahunMulai: tahunMulai,
+                            tahunSelesai: tahunSelesai
+                        });
+                    }
+                });
+                
+                // Dapatkan pengalaman kerja
+                const pengalaman = [];
+                $('.pengalaman-item').each(function() {
+                    const posisi = $(this).find('.posisi-kerja').val();
+                    const perusahaan = $(this).find('.perusahaan').val();
+                    const tahunMulai = $(this).find('.tahun-mulai-kerja').val();
+                    const tahunSelesai = $(this).find('.tahun-selesai-kerja').val();
+                    const deskripsi = $(this).find('.deskripsi-kerja').val();
+                    
+                    if (posisi && perusahaan && tahunMulai) {
+                        pengalaman.push({
+                            posisi: posisi,
+                            perusahaan: perusahaan,
+                            tahunMulai: tahunMulai,
+                            tahunSelesai: tahunSelesai,
+                            deskripsi: deskripsi
+                        });
+                    }
+                });
+                
+                // Dapatkan keahlian
+                const keahlian = [];
+                $('.keahlian-item').each(function() {
+                    const nama = $(this).find('.nama-keahlian').val();
+                    const level = $(this).find('.level-keahlian').val();
+                    
+                    if (nama && level) {
+                        keahlian.push({
+                            nama: nama,
+                            level: level
+                        });
+                    }
+                });
+                
+                // Dapatkan bahasa
+                const bahasa = [];
+                $('.bahasa-item').each(function() {
+                    const nama = $(this).find('.nama-bahasa').val();
+                    const level = $(this).find('.level-bahasa').val();
+                    
+                    if (nama && level) {
+                        bahasa.push({
+                            nama: nama,
+                            level: level
+                        });
+                    }
+                });
+                
+                // Buat template CV
+                let cvHTML = `
+                    <div class="cv-content">
+                        <!-- Header -->
+                        <div class="flex flex-col md:flex-row items-center md:items-start mb-8">
+                            ${fotoUrl ? `<div class="mr-6 mb-4 md:mb-0">
+                                <img src="${fotoUrl}" class="w-32 h-32 object-cover rounded-full border-4 border-blue-600">
+                            </div>` : ''}
+                            
+                            <div class="flex-1 text-center md:text-left">
+                                <h1 class="text-3xl font-bold text-blue-700">${nama}</h1>
+                                <p class="text-xl text-gray-600 mt-1">${posisi}</p>
+                                
+                                <div class="mt-3 space-y-1">
+                                    ${email ? `<p><span class="font-medium">Email:</span> ${email}</p>` : ''}
+                                    ${telepon ? `<p><span class="font-medium">Telepon:</span> ${telepon}</p>` : ''}
+                                    ${alamat ? `<p><span class="font-medium">Alamat:</span> ${alamat}</p>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ringkasan -->
+                        ${ringkasan ? `
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-3 pb-2 border-b-2 border-blue-600">Profil</h2>
+                            <p class="text-gray-700">${ringkasan}</p>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Pengalaman -->
+                        ${pengalaman.length > 0 ? `
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-3 pb-2 border-b-2 border-blue-600">Pengalaman Kerja</h2>
+                            
+                            <div class="space-y-5">
+                                ${pengalaman.map(p => `
+                                <div>
+                                    <div class="flex flex-col md:flex-row md:justify-between mb-1">
+                                        <h3 class="text-lg font-bold text-gray-700">${p.posisi}</h3>
+                                        <span class="text-blue-600 font-medium">${p.tahunMulai} - ${p.tahunSelesai || 'Sekarang'}</span>
+                                    </div>
+                                    <p class="text-gray-600 font-medium mb-2">${p.perusahaan}</p>
+                                    ${p.deskripsi ? `<p class="text-gray-700">${p.deskripsi}</p>` : ''}
+                                </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Pendidikan -->
+                        ${pendidikan.length > 0 ? `
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-3 pb-2 border-b-2 border-blue-600">Pendidikan</h2>
+                            
+                            <div class="space-y-5">
+                                ${pendidikan.map(p => `
+                                <div>
+                                    <div class="flex flex-col md:flex-row md:justify-between mb-1">
+                                        <h3 class="text-lg font-bold text-gray-700">${p.gelar}</h3>
+                                        <span class="text-blue-600 font-medium">${p.tahunMulai} - ${p.tahunSelesai}</span>
+                                    </div>
+                                    <p class="text-gray-600 font-medium">${p.institusi}</p>
+                                </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Keahlian dan Bahasa -->
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <!-- Keahlian -->
+                            ${keahlian.length > 0 ? `
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-3 pb-2 border-b-2 border-blue-600">Keahlian</h2>
+                                
+                                <div class="space-y-3">
+                                    ${keahlian.map(k => `
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-medium">${k.nama}</span>
+                                            <span>${'★'.repeat(k.level)}${'☆'.repeat(5-k.level)}</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${k.level * 20}%"></div>
+                                        </div>
+                                    </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                            
+                            <!-- Bahasa -->
+                            ${bahasa.length > 0 ? `
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-3 pb-2 border-b-2 border-blue-600">Bahasa</h2>
+                                
+                                <div class="space-y-3">
+                                    ${bahasa.map(b => `
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-medium">${b.nama}</span>
+                                            <span>${'★'.repeat(b.level)}${'☆'.repeat(5-b.level)}</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${b.level * 20}%"></div>
+                                        </div>
+                                    </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                // Tampilkan CV
+                $('#cv-preview').html(cvHTML);
+            }
+            
+            // Auto-generate on input change
+            $('#cvForm input, #cvForm textarea').on('input', function() {
+                // Check if main fields are filled
+                if ($('#nama').val() && $('#posisi').val() && $('#email').val() && $('#telepon').val()) {
+                    generateCV();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
